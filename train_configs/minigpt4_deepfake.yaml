@@ -1,0 +1,35 @@
+model:
+  arch: minigpt4
+  model_type: pretrain_llama2
+  max_txt_len: 160
+  end_sym: "</s>"
+  low_resource: True
+  prompt_template: '[INST] {} [/INST] '
+  llama_model: /mnt/c/Users/julia/Mini-GPT/MiniGPT-4/Llama-2-7b-chat-hf
+
+datasets:
+  deepfake_video:
+    data_path: ./data/train/lrs3/
+    vis_processor:
+      train:
+        name: "blip2_image_eval"
+        image_size: 224
+    text_processor:
+      train:
+        name: "blip_caption"
+
+run:
+  task: image_text_pretrain
+  optimizer: adamw
+  lr_sched: cosine
+  init_lr: 5e-5
+  min_lr: 5e-6
+  weight_decay: 0.05
+  max_epoch: 3
+  batch_size_train: 8
+  batch_size_eval: 8
+  num_workers: 4
+  warmup_steps: 500
+  logging_freq: 10
+  seed: 42
+  output_dir: output/minigpt4_deepfake

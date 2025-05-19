@@ -1,0 +1,23 @@
+model:
+  arch: minigpt4
+  model_type: pretrain_llama2
+  max_txt_len: 160
+  end_sym: "</s>"
+  low_resource: True
+  prompt_template: '[INST] {} [/INST] '
+  llama_model: /mnt/c/Users/julia/Mini-GPT/MiniGPT-4/Llama-2-7b-chat-hf
+
+datasets:
+  deepfake_video:
+    data_path: /mnt/c/Users/julia/OneDrive/Desktop/data/train/lrs3/
+    vis_processor:
+      train:
+        name: "blip2_image_eval"
+        image_size: 224
+    text_processor:
+      train:
+        name: "blip_caption"
+
+
+run:
+  task: image_text_pretrain
