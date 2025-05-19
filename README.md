@@ -10,7 +10,7 @@ The model processes multiple frames for each video, encodes the info with MiniGP
 
 This project is built on MiniGPT-4, developed by the Vision-CAIR team.
 
-If you use this code or model in your work, please consider citing their original paper:
+If you use this code or model in your work, please consider citing their original papers:
 
 ```bibtex
 @article{chen2023minigptv2,
