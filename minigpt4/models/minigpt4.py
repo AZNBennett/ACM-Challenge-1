@@ -102,7 +102,7 @@ class MiniGPT4(BaseModel):
             print("[SKIP] No usable frames in video — returning dummy logit")
             return {"logits": torch.tensor(0.0).cuda().requires_grad_()}
 
-        seq = torch.stack(frame_embeddings).unsqueeze(0)  # [1, T, D]
+        seq = torch.stack(frame_embeddings).unsqueeze(0)
         _, h_n = self.gru(seq)
 
         if torch.isnan(h_n).any() or torch.isinf(h_n).any():
