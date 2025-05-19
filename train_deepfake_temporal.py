@@ -74,8 +74,9 @@ def main():
     criterion = BCEWithLogitsLoss()
     optimizer = AdamW(model.parameters(), lr=1e-4, weight_decay=0.01)
 
-    step = 0
-    for epoch in range(1):
+    epochs = 1
+    for epoch in range(epochs):
+        step = 0
         print(f"\nEpoch {epoch + 1}")
         for batch in tqdm(dataloader, desc="Training"):
             if batch is None:
