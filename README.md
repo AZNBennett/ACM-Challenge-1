@@ -13,11 +13,16 @@ This project is built on MiniGPT-4, developed by the Vision-CAIR team.
 If you use this code or model in your work, please consider citing their original paper:
 
 ```bibtex
-@misc{zhu2023minigpt4,
-      title={MiniGPT-4: Enhancing Vision-language Understanding with Advanced Large Language Models},
-      author={Deyao Zhu and Jun Chen and Xiaoqian Shen and Xiang Li and Harry Yang and Xiyang Dai and Yutong Feng and Linjie Li and Jianwei Yang and Pengchuan Zhang and Lu Yuan and Lijuan Wang},
+@article{chen2023minigptv2,
+      title={MiniGPT-v2: large language model as a unified interface for vision-language multi-task learning}, 
+      author={Chen, Jun and Zhu, Deyao and Shen, Xiaoqian and Li, Xiang and Liu, Zechu and Zhang, Pengchuan and Krishnamoorthi, Raghuraman and Chandra, Vikas and Xiong, Yunyang and Elhoseiny, Mohamed},
       year={2023},
-      eprint={2304.10592},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV}
+      journal={arXiv preprint arXiv:2310.09478},
+}
+
+@article{zhu2023minigpt,
+  title={MiniGPT-4: Enhancing Vision-Language Understanding with Advanced Large Language Models},
+  author={Zhu, Deyao and Chen, Jun and Shen, Xiaoqian and Li, Xiang and Elhoseiny, Mohamed},
+  journal={arXiv preprint arXiv:2304.10592},
+  year={2023}
 }
