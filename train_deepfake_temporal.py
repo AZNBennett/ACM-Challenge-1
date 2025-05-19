@@ -13,7 +13,6 @@ torch.utils.checkpoint._use_reentrant = False
 from minigpt4.datasets.deepfake_video.deepfake_video_dataset import DeepfakeVideoDataset
 from minigpt4.models.minigpt4 import MiniGPT4
 from minigpt4.processors.blip_processors import Blip2ImageEvalProcessor, BlipCaptionProcessor
-# from torch.cuda.amp import GradScaler, autocast  # Optional for AMP stability
 
 def safe_collate(batch):
     clean = []
@@ -75,8 +74,6 @@ def main():
     criterion = BCEWithLogitsLoss()
     optimizer = AdamW(model.parameters(), lr=1e-4, weight_decay=0.01)
 
-    # scaler = GradScaler()  # Optional
-
     step = 0
     for epoch in range(1):
         print(f"\nEpoch {epoch + 1}")
@@ -92,13 +89,12 @@ def main():
                 outputs = model(frames, text_input)
                 video_logit = outputs["logits"]
 
-                # Diagnostic: check for bad logits
+                # Checking for bad logits
                 if torch.isnan(video_logit).any() or torch.isinf(video_logit).any():
                     print(f"[NaN/Inf] Logit at step {step}: {video_logit}")
                     step += 1
                     continue
 
-                # Clamp logits to avoid extreme BCE penalty
                 video_logit = torch.clamp(video_logit, min=-20, max=20)
 
                 loss = criterion(video_logit.view(-1), label.view(-1))
@@ -112,12 +108,6 @@ def main():
                 loss.backward()
 
                 torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
-
-                # scaler.scale(loss).backward()
-                # scaler.unscale_(optimizer)
-                # torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
-                # scaler.step(optimizer)
-                # scaler.update()
 
                 optimizer.step()
 
