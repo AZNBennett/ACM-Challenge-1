@@ -191,3 +191,7 @@ checkpoint/
 __pycache__/
 *.log
 *.ckpt
+
+
+!baseline_experiments/
+!baseline_experiments/**
