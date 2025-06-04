@@ -30,12 +30,12 @@ In the repository, we include two python scripts to build the json file that our
 Training:
       From the root of the directory, make sure your anaconda environment is activated, then run:
       
-            python train_deepfake_temporal.py
+      python train_deepfake_temporal.py
 
 Validation:
       From the same root, you can run:
       
-            python eval.py
+      python eval.py
       
 which will output the average loss, AUC, and accuracy.
 
