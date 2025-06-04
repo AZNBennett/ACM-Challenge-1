@@ -24,7 +24,7 @@ The model processes multiple frames for each video, encodes the info with MiniGP
       │   └── lrs3
       │       └── [video folders and files]
 ```
-      In the repository, we include two python scripts to build the json file that our dataset loader uses to access the files from. Both follow the same pattern, but are premodified to support file building for the training and validation data. You can modify the directories as you please, but to run these without any modification, place the train_metadata.py inside the /train folder, where it should be sharing the same space as the /lrs3 folder, and the same with the corresponding val_metadata.py inside the /val folder.
+In the repository, we include two python scripts to build the json file that our dataset loader uses to access the files from. Both follow the same pattern, but are premodified to support file building for the training and validation data. You can modify the directories as you please, but to run these without any modification, place the train_metadata.py inside the /train folder, where it should be sharing the same space as the /lrs3 folder, and the same with the corresponding val_metadata.py inside the /val folder.
 
 4: Training
       From the root of the directory, make sure your anaconda environment is activated, then run:
