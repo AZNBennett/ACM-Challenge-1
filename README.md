@@ -11,6 +11,7 @@ Place the models weights in the ./Llama-2-7b-chat-hf/ folder.
       
 Install Requirements and Prepare the Environment:
 All python requirements to run the scripts are specified in the requirements.txt file. Make sure that your setup support anaconda, the environment is already prepared for you from the original repository. To activate the environment, you can run:
+      
       conda activate minigptv
 
 Prepare Dataset:
