@@ -1,8 +1,11 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 from torch.cuda.amp import autocast as autocast
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from peft import prepare_model_for_kbit_training, get_peft_model, LoraConfig
+import torchvision.models as models
+import torchvision.transforms as T
 
 from minigpt4.common.registry import registry
 from minigpt4.models.base_model import BaseModel
@@ -32,7 +35,6 @@ class MiniGPT4(BaseModel):
             quantization_config=bnb_config,
             device_map="auto",
         )
-
         self.llama_model = prepare_model_for_kbit_training(self.llama_model)
 
         lora_config = LoraConfig(
@@ -51,7 +53,14 @@ class MiniGPT4(BaseModel):
         )
         self.tokenizer.pad_token = self.tokenizer.unk_token
 
-        self.hidden_dim = self.llama_model.config.hidden_size
+        from torchvision.models import resnet34, ResNet34_Weights
+        resnet = resnet34(weights=ResNet34_Weights.DEFAULT)
+
+        self.vision_encoder = nn.Sequential(*list(resnet.children())[:-1])
+        self.vision_encoder.eval()
+        self.vision_encoder.requires_grad_(False)
+
+        self.hidden_dim = 512
 
         self.gru = nn.GRU(
             input_size=self.hidden_dim,
@@ -59,7 +68,19 @@ class MiniGPT4(BaseModel):
             batch_first=True,
         )
 
-        self.classifier = nn.Linear(self.hidden_dim, 1)
+        self.audio_proj = nn.Linear(64, self.hidden_dim)
+        self.fusion_fc = nn.Linear(self.hidden_dim * 2, self.hidden_dim)
+        self.dropout = nn.Dropout(0.2)
+
+        self.classifier = nn.Sequential(
+            nn.Linear(self.hidden_dim, self.hidden_dim // 2),
+            nn.ReLU(),
+            nn.Linear(self.hidden_dim // 2, 1)
+        )
+
+
+        self.resnet_norm = T.Normalize(mean=[0.485, 0.456, 0.406],
+                                       std=[0.229, 0.224, 0.225])
 
     def encode_text(self, text):
         inputs = self.tokenizer(
@@ -71,7 +92,7 @@ class MiniGPT4(BaseModel):
         )
         return inputs.input_ids.cuda(), inputs.attention_mask.cuda()
 
-    def forward(self, frames, text_input):
+    def forward(self, frames, text_input, audio):
         input_ids, attention_mask = self.encode_text(text_input)
         frame_embeddings = []
 
@@ -79,23 +100,14 @@ class MiniGPT4(BaseModel):
             image = image.unsqueeze(0).cuda()
 
             try:
-                with autocast():
-                    outputs = self.llama_model(
-                        input_ids=input_ids,
-                        attention_mask=attention_mask,
-                        output_hidden_states=True,
-                        return_dict=True
-                    )
-
-                cls_embed = outputs.hidden_states[-1][:, 0, :]
-                if torch.isnan(cls_embed).any() or torch.isinf(cls_embed).any():
-                    print(f"[WARN] NaN in CLS embed for frame {i}, skipping")
-                    continue
-
-                frame_embeddings.append(cls_embed.squeeze(0))
+                image = self.resnet_norm(image)
+                with torch.no_grad():
+                    feat = self.vision_encoder(image)
+                    feat = feat.view(1, -1)
+                frame_embeddings.append(feat.squeeze(0))
 
             except Exception as e:
-                print(f"[ERROR] Frame {i} forward pass failed: {e}")
+                print(f"[ERROR] Frame {i} vision encoding failed: {e}")
                 continue
 
         if not frame_embeddings:
@@ -109,5 +121,22 @@ class MiniGPT4(BaseModel):
             print("[MODEL ERROR] NaN/Inf in GRU hidden state")
             return {"logits": torch.tensor(0.0).cuda().requires_grad_()}
 
-        logits = self.classifier(h_n.squeeze(0))
+        visual_feat = h_n.squeeze(0)
+        audio = audio.to(visual_feat.device)
+
+        try:
+            audio_feat = torch.mean(audio, dim=-1)
+            audio_feat = self.audio_proj(audio_feat)
+        except Exception as e:
+            print(f"[WARN] Audio processing failed: {e}")
+            audio_feat = torch.zeros_like(visual_feat)
+
+        visual_feat = F.normalize(visual_feat, dim=-1)
+        audio_feat = F.normalize(audio_feat, dim=-1)
+
+        combined = torch.cat([visual_feat, audio_feat], dim=-1)
+        combined = self.fusion_fc(combined)
+        combined = self.dropout(combined)
+
+        logits = self.classifier(combined)
         return {"logits": logits.squeeze(0)}
