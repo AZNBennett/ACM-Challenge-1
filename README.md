@@ -13,7 +13,25 @@ The model processes multiple frames for each video, encodes the info with MiniGP
       All python requirements to run the scripts are specified in the requirements.txt file. Make sure that your setup support anaconda, the environment is already prepared for you from the original repository. To activate the environment, you can run:
             conda activate minigptv
             
-3: Prepare data
+3: Prepare Dataset
+      To start, follow the instructions here: https://huggingface.co/datasets/ControlNet/AV-Deepfake1M-PlusPlus and then organize the data as such, starting from the root of this repo:
+      ./data
+      ├── train
+      │   └── lrs3
+      │       └── [video folders and files]
+      ├── val
+      │   └── lrs3
+      │       └── [video folders and files]
+      In the repository, we include two python scripts to build the json file that our dataset loader uses to access the files from. Both follow the same pattern, but are premodified to support file building for the training and validation data. You can modify the directories as you please, but to run these without any modification, place the train_metadata.py inside the /train folder, where it should be sharing the same space as the /lrs3 folder, and the same with the corresponding val_metadata.py inside the /val folder.
+
+4: Training
+      From the root of the directory, make sure your anaconda environment is activated, then run:
+            python train_deepfake_temporal.py
+
+5: Validation
+      From the same root, you can run:
+            python eval.py
+      which will output the average loss, AUC, and accuracy.
 
 > This repository includes modified source code originally licensed under the [BSD 3-Clause License](LICENSE.md) from [MiniGPT-4](https://github.com/Vision-CAIR/MiniGPT-4). All original license terms and attributions are preserved.
 
