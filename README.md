@@ -29,12 +29,15 @@ In the repository, we include two python scripts to build the json file that our
 
 Training:
       From the root of the directory, make sure your anaconda environment is activated, then run:
+      
             python train_deepfake_temporal.py
 
 Validation:
       From the same root, you can run:
+      
             python eval.py
-      which will output the average loss, AUC, and accuracy.
+      
+which will output the average loss, AUC, and accuracy.
 
 > This repository includes modified source code originally licensed under the [BSD 3-Clause License](LICENSE.md) from [MiniGPT-4](https://github.com/Vision-CAIR/MiniGPT-4). All original license terms and attributions are preserved.
 
