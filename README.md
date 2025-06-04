@@ -6,8 +6,8 @@ The model processes multiple frames for each video, encodes the info with MiniGP
 
 # Setting Up the Model - Anaconda #
 1: Model Weights
-      Download the Llama 2 7B Model Weights from: https://huggingface.co/meta-llama/Llama-2-7b-chat-hf
-      Place the models weights in the ./Llama-2-7b-chat-hf/ folder.
+Download the Llama 2 7B Model Weights from: https://huggingface.co/meta-llama/Llama-2-7b-chat-hf
+Place the models weights in the ./Llama-2-7b-chat-hf/ folder.
       
 2: Install Requirements and Prepare the Environment
       All python requirements to run the scripts are specified in the requirements.txt file. Make sure that your setup support anaconda, the environment is already prepared for you from the original repository. To activate the environment, you can run:
