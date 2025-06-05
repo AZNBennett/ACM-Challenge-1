@@ -41,6 +41,10 @@ which will output the average loss, AUC, and accuracy.
 
 > This repository includes modified source code originally licensed under the [BSD 3-Clause License](LICENSE.md) from [MiniGPT-4](https://github.com/Vision-CAIR/MiniGPT-4). All original license terms and attributions are preserved.
 
+## Baseline Experiments with Gemini 2.0 Flash
+
+The "baseline_experiments" directory contains preliminary evaluations conducted using Google's proprietary multimodal large language model, "Gemini 2.0 Flash". These experiments employed few-shot prompting techniques on a curated subset of a DeepFake audio-visual dataset. The objective was to assess the model's initial accuracy in detecting manipulated content, thereby gauging the capabilities of off-the-shelf multimodal LLMs in identifying synthetic media. Gemini 2.0 Flash supports various input modalities, including text, images, audio, and video, and is designed for low-latency, high-throughput applications.
+
 ## 📖 Citation
 
 This project is built on MiniGPT-4, developed by the Vision-CAIR team.
@@ -61,3 +65,4 @@ If you use this code or model in your work, please consider citing their origina
   journal={arXiv preprint arXiv:2304.10592},
   year={2023}
 }
+```
